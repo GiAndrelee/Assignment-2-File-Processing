@@ -1,0 +1,52 @@
+const path = require('path');
+const {
+  countWordsFromText,
+  findLongestWordFromText,
+  countLinesFromText,
+  countWords,
+  findLongestWord,
+  countLines,
+} = require('../src/textAnalyzer');
+
+describe('textAnalyzer (text helpers)', () => {
+  test('countWordsFromText returns 0 for empty or whitespace', () => {
+    expect(countWordsFromText('')).toBe(0);
+    expect(countWordsFromText('   \n\t ')).toBe(0);
+  });
+
+  test('countWordsFromText counts words correctly', () => {
+    expect(countWordsFromText('hello world')).toBe(2);
+    expect(countWordsFromText('one\ntwo three')).toBe(3);
+    expect(countWordsFromText('punctuation! is, handled.')).toBe(3);
+  });
+
+  test('findLongestWordFromText returns empty string for empty input', () => {
+    expect(findLongestWordFromText('')).toBe('');
+  });
+
+  test('findLongestWordFromText finds the longest word', () => {
+    expect(findLongestWordFromText('a ab abc abcd abc')).toBe('abcd');
+    expect(findLongestWordFromText('well-known hyphenated')).toBe('wellknown'); // punctuation stripped
+  });
+
+  test('countLinesFromText returns 0 for empty string', () => {
+    expect(countLinesFromText('')).toBe(0);
+  });
+
+  test('countLinesFromText counts lines for different line endings', () => {
+    expect(countLinesFromText('one\ntwo\nthree')).toBe(3);
+    expect(countLinesFromText('one\r\ntwo\r\n')).toBe(2);
+    expect(countLinesFromText('single line')).toBe(1);
+  });
+});
+
+describe('textAnalyzer (file helpers)', () => {
+  const quotesPath = path.join(__dirname, '..', 'data', 'quotes.txt');
+  const sampleTextPath = path.join(__dirname, '..', 'data', 'sample-text.txt');
+
+  test('file-based functions run without throwing (smoke tests)', () => {
+    expect(() => countWords(quotesPath)).not.toThrow();
+    expect(() => findLongestWord(sampleTextPath)).not.toThrow();
+    expect(() => countLines(quotesPath)).not.toThrow();
+  });
+});
