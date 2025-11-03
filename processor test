@@ -1,0 +1,49 @@
+const {
+  parseNumbersFromText,
+  sumNumbersFromText,
+  minNumberFromText,
+  maxNumberFromText,
+  averageFromText,
+  sumNumbers,
+  minNumber,
+  maxNumber,
+  average,
+} = require('../src/numberProcessor');
+const path = require('path');
+
+describe('numberProcessor (text helpers)', () => {
+  test('parseNumbersFromText returns empty array for empty input', () => {
+    expect(parseNumbersFromText('')).toEqual([]);
+    expect(parseNumbersFromText(' \n \r\n')).toEqual([]);
+  });
+
+  test('parseNumbersFromText ignores non-numeric lines', () => {
+    const txt = '10\nabc\n20\n\n30.5\n-5';
+    expect(parseNumbersFromText(txt)).toEqual([10, 20, 30.5, -5]);
+  });
+
+  test('sumNumbersFromText, min, max, average work correctly', () => {
+    const txt = '1\n2\n3\n4\n5';
+    expect(sumNumbersFromText(txt)).toBe(15);
+    expect(minNumberFromText(txt)).toBe(1);
+    expect(maxNumberFromText(txt)).toBe(5);
+    expect(averageFromText(txt)).toBe(3);
+  });
+
+  test('functions return null when no numbers present', () => {
+    expect(minNumberFromText('')).toBeNull();
+    expect(maxNumberFromText('')).toBeNull();
+    expect(averageFromText('')).toBeNull();
+  });
+});
+
+describe('numberProcessor (file helpers)', () => {
+  const numbersPath = path.join(__dirname, '..', 'data', 'sample-numbers.txt');
+
+  test('file-based functions run without throwing (smoke tests)', () => {
+    expect(() => sumNumbers(numbersPath)).not.toThrow();
+    expect(() => minNumber(numbersPath)).not.toThrow();
+    expect(() => maxNumber(numbersPath)).not.toThrow();
+    expect(() => average(numbersPath)).not.toThrow();
+  });
+});
