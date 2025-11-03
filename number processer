@@ -1,0 +1,83 @@
+const fs = require('fs');
+
+function readFileSyncUtf8(path) {
+  return fs.readFileSync(path, 'utf8');
+}
+
+function parseNumbersFromText(text) {
+  if (typeof text !== 'string' || text.trim() === '') return [];
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const nums = [];
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === '') continue;
+    const n = Number(trimmed);
+    if (Number.isFinite(n)) nums.push(n);
+    // Non-numeric lines are ignored
+  }
+  return nums;
+}
+
+function sumNumbersFromText(text) {
+  const nums = parseNumbersFromText(text);
+  return nums.reduce((s, v) => s + v, 0);
+}
+
+function minNumberFromText(text) {
+  const nums = parseNumbersFromText(text);
+  if (nums.length === 0) return null;
+  return Math.min(...nums);
+}
+
+function maxNumberFromText(text) {
+  const nums = parseNumbersFromText(text);
+  if (nums.length === 0) return null;
+  return Math.max(...nums);
+}
+
+function averageFromText(text) {
+  const nums = parseNumbersFromText(text);
+  if (nums.length === 0) return null;
+  return nums.reduce((s, v) => s + v, 0) / nums.length;
+}
+
+// File-based helpers
+function sumNumbers(filePath) {
+  return sumNumbersFromText(readFileSyncUtf8(filePath));
+}
+
+function minNumber(filePath) {
+  return minNumberFromText(readFileSyncUtf8(filePath));
+}
+
+function maxNumber(filePath) {
+  return maxNumberFromText(readFileSyncUtf8(filePath));
+}
+
+function average(filePath) {
+  return averageFromText(readFileSyncUtf8(filePath));
+}
+
+// If run directly, test with sample file paths
+if (require.main === module) {
+  try {
+    console.log('sample-numbers sum:', sumNumbers('data/sample-numbers.txt'));
+    console.log('sample-numbers min:', minNumber('data/sample-numbers.txt'));
+    console.log('sample-numbers max:', maxNumber('data/sample-numbers.txt'));
+    console.log('sample-numbers avg:', average('data/sample-numbers.txt'));
+  } catch (err) {
+    console.error('Error reading sample files:', err.message);
+  }
+}
+
+module.exports = {
+  parseNumbersFromText,
+  sumNumbersFromText,
+  minNumberFromText,
+  maxNumberFromText,
+  averageFromText,
+  sumNumbers,
+  minNumber,
+  maxNumber,
+  average,
+};
