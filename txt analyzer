@@ -1,0 +1,76 @@
+const fs = require('fs');
+
+function readFileSyncUtf8(path) {
+  return fs.readFileSync(path, 'utf8');
+}
+
+function countWordsFromText(text) {
+  if (typeof text !== 'string' || text.trim() === '') return 0;
+  // Split on whitespace, filter out empty tokens
+  const words = text
+    .split(/\s+/)
+    .filter(Boolean);
+  return words.length;
+}
+
+function findLongestWordFromText(text) {
+  if (typeof text !== 'string' || text.trim() === '') return '';
+  const words = text
+    .split(/\s+/)
+    .map(w => w.replace(/^[^\w]+|[^\w]+$/g, '')) // trim punctuation around words
+    .filter(Boolean);
+  if (words.length === 0) return '';
+  let longest = words[0];
+  for (const w of words) {
+    if (w.length > longest.length) longest = w;
+  }
+  return longest;
+}
+
+function countLinesFromText(text) {
+  if (typeof text !== 'string' || text === '') return 0;
+  // Normalize line endings, then count lines
+  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  // If file ends with newline, splitting yields a trailing empty string, handle accordingly
+  const lines = normalized.split('\n');
+  return lines.length;
+}
+
+// Helpers that operate on files
+function countWords(filePath) {
+  const text = readFileSyncUtf8(filePath);
+  return countWordsFromText(text);
+}
+
+function findLongestWord(filePath) {
+  const text = readFileSyncUtf8(filePath);
+  return findLongestWordFromText(text);
+}
+
+function countLines(filePath) {
+  const text = readFileSyncUtf8(filePath);
+  return countLinesFromText(text);
+}
+
+// If run directly, run against sample data files (adjust paths if necessary)
+if (require.main === module) {
+  try {
+    console.log('quotes.txt words:', countWords('data/quotes.txt'));
+    console.log('sample-text.txt words:', countWords('data/sample-text.txt'));
+    console.log('quotes.txt longest word:', findLongestWord('data/quotes.txt'));
+    console.log('sample-text.txt longest word:', findLongestWord('data/sample-text.txt'));
+    console.log('quotes.txt lines:', countLines('data/quotes.txt'));
+    console.log('sample-text.txt lines:', countLines('data/sample-text.txt'));
+  } catch (err) {
+    console.error('Error reading sample files:', err.message);
+  }
+}
+
+module.exports = {
+  countWordsFromText,
+  findLongestWordFromText,
+  countLinesFromText,
+  countWords,
+  findLongestWord,
+  countLines,
+};
